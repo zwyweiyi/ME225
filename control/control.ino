@@ -97,13 +97,13 @@ void setup()
 
   // Stepper1
   // set the speed at 100 rpm:
-  myStepper1.setSpeed(10);
+  myStepper1.setSpeed(13);
   //myStepper1.step(-1);
 
 
   // Stepper2
   // set the speed at 20 rpm:
-  myStepper2.setSpeed(20);
+  myStepper2.setSpeed(15);
 
   // DC 1
   pinMode(dc1_encoderPinA, INPUT);
@@ -148,15 +148,18 @@ void loop()
   {
     // read angle from UDP
     Udp.read(packetBuffer, 6);
-    angle_stepper1 = packetBuffer[0]*10;
-    angle_stepper2 = packetBuffer[1];
-    angle_dc1 = packetBuffer[2]*3;
-    angle_dc2 = packetBuffer[3];
-    angle_dc3 = packetBuffer[4]*5;
-    angle_dc4 = packetBuffer[5]*7;
-  }
+    angle_stepper1 = ((int)packetBuffer[0])*8;
     
-
+    angle_stepper2 = -((int)packetBuffer[1])*2;
+    
+    angle_dc1 = ((int)packetBuffer[2])*3;
+    
+    angle_dc2 = -((int)packetBuffer[3]);
+    
+    angle_dc3 = ((int)packetBuffer[4])*5;
+    
+    angle_dc4 = ((int)packetBuffer[5])*7;
+  }
     // Stepper1
     // step some angle in one direction:
     int step1 = angle_stepper1 - angle_stepper1_current;
@@ -214,8 +217,8 @@ void loop()
 
   // motor power
   float dc1_pwr = fabs(dc1_u);
-  if( dc1_pwr > 128 ){
-    dc1_pwr = 128;
+  if( dc1_pwr > 120 ){
+    dc1_pwr = 120;
   }
 
   // motor direction
@@ -271,8 +274,8 @@ void loop()
 
   // motor power
   float dc2_pwr = fabs(dc2_u);
-  if( dc2_pwr > 25 ){
-    dc2_pwr = 25;
+  if( dc2_pwr > 255 ){
+    dc2_pwr = 255;
   }
 
   // motor direction
@@ -286,12 +289,12 @@ void loop()
 
 
   // store previous error
-  dc1_eprev = dc2_e;
-//
-////  Serial.print(dc2_target);
-////  Serial.print(" ");
-////  Serial.print(dc2_pos);
-////  Serial.println();
+  dc2_eprev = dc2_e;
+
+//  Serial.print(dc2_target);
+//  Serial.print(" ");
+//  Serial.print(dc2_pos);
+//  Serial.println();
 
    //DC 3
   int dc3_target = angle_dc3;
@@ -400,11 +403,11 @@ void loop()
 
   // store previous error
   dc4_eprev = dc4_e;
-
-  Serial.print(dc4_target);
-  Serial.print(" ");
-  Serial.print(dc4_pos);
-  Serial.println();
+//
+//  Serial.print(dc4_target);
+//  Serial.print(" ");
+//  Serial.print(dc4_pos);
+//  Serial.println();
 }
 
 void setMotor(int dir, int pwmVal, int pwm, int in1, int in2)
